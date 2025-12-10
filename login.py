@@ -15,20 +15,23 @@ def register_user():
     user_name = input("Enter user name: ")
     user_password = input("Enter password: ")
     hash = hash_password(user_password)
-    with open('users.txt', 'a') as f:
+    # store users in the repository Data folder
+    with open('Data/user.txt', 'a') as f:
         f.write(f'{user_name},{hash}\n')
     print("User registered successfully.")
 
 def log_in():
     user_name = input("Enter user name: ")
     user_password = input("Enter password: ")
-    with open('users.txt', 'r') as f:
+    path = 'Data/user.txt'
+    with open(path, 'r') as f:
         lines = f.readlines()
         for line in lines:
             line = line.strip()
-            if not line:  # Skip empty lines
+            if not line:
                 continue
             name, hash = line.split(',', 1)
             if name == user_name:
                 return validate_password(user_password, hash)
-            return False
+    # If we get here no matching user found
+    return False

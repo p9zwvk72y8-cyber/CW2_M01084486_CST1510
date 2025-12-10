@@ -1,4 +1,8 @@
 from login import register_user, log_in
+
+DB_PATH = 'Data/telligence_platform.db'
+
+
 def menu():
     print('Welcome to the system')
     print('Choose from the oiptions below')
@@ -24,4 +28,34 @@ def main():
         else:
             print("Invalid choice. Please try again.")
 
-main()
+
+
+import sqlite3
+import pandas as pd
+conn = sqlite3.connect('DATA/telligence_platform.db')
+
+
+def add_user(conn, name, hash):
+    curr = conn.cursor()
+    sql =(""" INSERT INTO users (username,password_hash) VALUES (?,?)""")
+    param = (name,hash)
+    curr.execute(sql,param)
+    conn.commit()
+
+def get_users(conn,name):
+    curr = conn.cursor()
+    sql = (""" SELECT * FROM users """)
+    param = (name,)
+    curr.execute(sql,param)
+    user = curr.fetchone()
+    return (user)
+
+def migrate_user_data():
+    with open('Data/users.txt','r')as f:
+        users = f.readlines()
+    for user in users:
+        name, hash = user.strip().split(',',1)
+        add_user(conn,name,hash)
+    conn.close()
+
+
